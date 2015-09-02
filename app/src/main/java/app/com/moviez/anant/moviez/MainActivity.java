@@ -1,41 +1,22 @@
 package app.com.moviez.anant.moviez;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 
 public class MainActivity extends ActionBarActivity {
 
-    GridView gridView;
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        gridView = (GridView)findViewById(R.id.gridview_tiles);
-        if (gridView != null) {
-            gridView.setAdapter(new ImageAdapter(getApplicationContext()));
-        }
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parentView, View view, int position, long id) {
+      setContentView(R.layout.activity_main);
 
-                Intent i = new Intent(getApplicationContext(),ImageDetail.class);
-
-                i.putExtra("id",position);
-                startActivity(i);
-
-
-            }
-        });
-
-
-
-    }
+          }
 
 
     @Override
@@ -52,11 +33,32 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        boolean decide_url;
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
+
             return true;
+        }
+        if (id == R.id.action_sort){
+
+           // networkCall.urlPopular = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=";
+            return true;
+
+        }
+        if (id == R.id.action_sortrated){
+
+            //networkCall.urlRated = "http://api.themoviedb.org/3/discover/movie?desc&api_key=";
+            return true;
+
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
+
+
+
 }

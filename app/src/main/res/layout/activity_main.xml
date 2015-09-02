@@ -1,4 +1,4 @@
-<LinearLayout
+<fragment
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment"
@@ -7,21 +7,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    android:orientation="horizontal">
-
-
-    <GridView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:id = "@+id/gridview_tiles"
-        android:columnWidth="90dp"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="10dp"
-        android:stretchMode="columnWidth"
-        android:gravity="center">
-
-    </GridView>
-    </LinearLayout>
+    android:orientation="horizontal"/>
 
