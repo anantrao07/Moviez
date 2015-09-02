@@ -8,6 +8,7 @@ import android.view.MenuItem;
 public class MainActivity extends ActionBarActivity {
 
 
+    int count = R.id.action_sort;
 
 
 
@@ -42,12 +43,14 @@ public class MainActivity extends ActionBarActivity {
         }
         if (id == R.id.action_sort){
 
+            count = 2;
            // networkCall.urlPopular = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=";
             return true;
 
         }
         if (id == R.id.action_sortrated){
 
+            count = R.id.action_sortrated;
             //networkCall.urlRated = "http://api.themoviedb.org/3/discover/movie?desc&api_key=";
             return true;
 

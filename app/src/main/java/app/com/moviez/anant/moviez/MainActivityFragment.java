@@ -15,9 +15,10 @@ import java.util.ArrayList;
 public class MainActivityFragment extends Fragment {
 
     public  ImageAdapter movieDetailAdapter ;
-    private ArrayList<MoviesDetail> mvd;
-    NetworkCall nw = new NetworkCall();
 
+    public ArrayList<MoviesDetail> mvd ;
+
+    NetworkCall nw = new NetworkCall();
     GridView gridView;
 
 
@@ -46,7 +47,7 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("moviedetails",nw.allMovies);
+        outState.putParcelableArrayList("moviedetails",mvd);
 
     }
 
@@ -68,13 +69,14 @@ public class MainActivityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
         if(savedInstanceState == null || !savedInstanceState.containsKey("moviedetails")){
-            new ArrayList<>(nw.allMovies);
+           new ArrayList<>(nw.allMovies);
 
         }
         else
         {
-            savedInstanceState.getParcelableArrayList("moviesdetails");
+           savedInstanceState.getParcelableArrayList("moviesdetails");
         }
 
     }
@@ -88,8 +90,9 @@ public class MainActivityFragment extends Fragment {
 
         nw.execute();
 
+       // movieDetailAdapter = new ImageAdapter(getActivity(),nw.allMovies);
         movieDetailAdapter = new ImageAdapter(getActivity(),nw.allMovies);
-        movieDetailAdapter.notifyDataSetChanged();
+        
         gridView = (GridView)rootView.findViewById(R.id.movies_gridview);
         gridView.setAdapter(movieDetailAdapter);
 

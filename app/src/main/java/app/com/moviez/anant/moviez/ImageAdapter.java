@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Created by anant on 2015-08-14.
@@ -29,7 +29,7 @@ public class ImageAdapter extends ArrayAdapter<MoviesDetail> {
 
     Context context;
 
-    public ImageAdapter(Activity context  , List<MoviesDetail> mvd){
+    public ImageAdapter(Activity context  , ArrayList<MoviesDetail> mvd){
         super(context , 0 ,mvd);
         this.context = getContext();
     }
