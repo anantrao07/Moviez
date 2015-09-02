@@ -92,7 +92,7 @@ public class MainActivityFragment extends Fragment {
 
        // movieDetailAdapter = new ImageAdapter(getActivity(),nw.allMovies);
         movieDetailAdapter = new ImageAdapter(getActivity(),nw.allMovies);
-        
+
         gridView = (GridView)rootView.findViewById(R.id.movies_gridview);
         gridView.setAdapter(movieDetailAdapter);
 
