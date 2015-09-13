@@ -19,18 +19,17 @@ import java.util.ArrayList;
 public class ImageAdapter extends ArrayAdapter<MoviesDetail> {
 
     private static final String LOG_TAG = MoviesDetail.class.getSimpleName();
-    protected String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
-    protected String POSTER_SIZE = "w185";
-
-
-
-
+    protected static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
+    protected static final String POSTER_SIZE = "w342";//"w342";//"w185";
 
 
     Context context;
 
     public ImageAdapter(Activity context  , ArrayList<MoviesDetail> mvd){
+        //passing the context and datalist into the internal implementation of the adapter.constructor is called the
+        //is done with the below line in super class.
         super(context , 0 ,mvd);
+
         this.context = getContext();
     }
 
@@ -43,13 +42,13 @@ public class ImageAdapter extends ArrayAdapter<MoviesDetail> {
 
         MoviesDetail moviedetail = getItem(position);
 
-
-        if(convertView==null){
+    //convertview is the view returned by arrayadapter which will be asked by the grid view,to inflate the ui
+       if(convertView==null){
 
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_image_detail,parent,false);
-            notifyDataSetChanged();
 
-        }
+
+       }
         ImageView iv = (ImageView)convertView.findViewById(R.id.detail_imageview);
         TextView tv = (TextView)convertView.findViewById(R.id.image_textview);
 
@@ -61,9 +60,6 @@ public class ImageAdapter extends ArrayAdapter<MoviesDetail> {
         String url = sb.toString();
         Picasso.with(context).load(url).into(iv);
         tv.setText(moviedetail.getJsf_original_title());
-        notifyDataSetChanged();
-
-
 
 
         return  convertView;

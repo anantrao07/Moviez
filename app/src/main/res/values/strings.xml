@@ -4,4 +4,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_image_detail">ImageDetail</string>
     <string name="action_sort"> SortBy:Most Popular</string>
+    <string name="action_rated_sort">SortBy: Most Rated</string>
+    <string name="title_activity_detail">Details</string>
 </resources>

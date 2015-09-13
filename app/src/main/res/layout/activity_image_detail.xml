@@ -1,22 +1,33 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    tools:context="app.com.moviez.anant.moviez.ImageDetail">
-
+    android:id="@+id/frame_layout"
+    >
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="110dp"
+        android:layout_height="150dp"
         android:id="@+id/detail_imageview"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:layout_margin="2dp"/>
 
         <TextView
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/detail_imageview"
             android:id = "@+id/image_textview"
+            android:textColor="@color/primarydarkstars"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:layout_margin="4dp"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
 
         />
+</RelativeLayout>
 
-</FrameLayout>
+</LinearLayout>
