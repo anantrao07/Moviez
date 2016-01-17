@@ -57,7 +57,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
     public interface Callback{
 
-        public void onItemSelected(Uri data  , int pos);
+        public void onItemSelected(Uri data  , Cursor c);
     }
 
   /*  public static MainActivityFragment newInstance(int index ) {
@@ -312,14 +312,14 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                //  MoviesDetail msg = movieDetailAdapter.getItem(position);
 
-               getActivity().getContentResolver().query(MovieProvider.Movies.CONTENT_URI,
+            /*   getActivity().getContentResolver().query(MovieProvider.Movies.CONTENT_URI,
                        new String[]{MoviesColumns.COLUMN_MOVIE_ID},
                        null,
                        null,//new String[]{Integer.toString(movieId)}, //   new String[]{Integer.toString(movieId)},
-                       null);
+                       null);*/
               Cursor c = (Cursor) adapterView.getItemAtPosition(position);
 
-               ((Callback) getActivity()).onItemSelected(MovieProvider.Movies.CONTENT_URI , adapterView.getSelectedItemPosition());
+               ((Callback) getActivity()).onItemSelected(MovieProvider.Movies.CONTENT_URI , (Cursor)adapterView.getItemAtPosition(position));
 
 
                //( (Callback)getActivity()).onItemSelected((Cursor)adapterView.getItemAtPosition(position));
@@ -377,7 +377,7 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
 
                String user_ratingstring = Float.toString(c.getFloat(idx_rating));
 
-               Bundle bundle = new Bundle();
+             /*  Bundle bundle = new Bundle();
                bundle.putString(MOVIE_TITLE, c.getString(idx_title));
                bundle.putString(MOVIE_ABOUT, c.getString(idx_about));
                bundle.putString(MOVIE_RELEASE_DATE, c.getString(idx_release_date));
@@ -391,9 +391,9 @@ public class MainActivityFragment extends Fragment implements LoaderManager.Load
                 detailActivity.putExtra(MOVIE_RATING, user_ratingstring);
                 detailActivity.putExtra(MOVIE_POSTER, url);
                 detailActivity.putExtra(MOVIE_ID, movie_dString);
-               startActivity(detailActivity);
+              // startActivity(detailActivity);
 
-               //c.close();
+               //c.close();*/
            }
 
 

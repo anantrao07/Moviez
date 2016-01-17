@@ -132,19 +132,8 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
     }
 
- /*   public static DetailActivityFragment newInstance(int index){
-
-        DetailActivityFragment f = new DetailActivityFragment();
-
-        Bundle args = new Bundle();
-        args.putInt("Movie id", index);
-
-        f.setArguments(args);
-        return f;
 
 
-    }
-*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -152,34 +141,43 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
         View rootview = inflater.inflate(R.layout.fragment_detail, container, false);
 
+        Bundle arguments;
 
-        Bundle arguments = getArguments();
+        if(getArguments()!=null) {
 
-        if(arguments != null){
+             arguments = getArguments();
 
-            mUri = arguments.getParcelable(DETAIL_URI);
+        }
+        else {
+            intent = getActivity().getIntent();
+             arguments = intent.getExtras();
         }
 
+           // mUri = arguments.getParcelable(DETAIL_URI);
+
+       // }
+
+        if(arguments!=null){
         favorite_btn = (Switch) rootview.findViewById(R.id.fav_btn);
 
-        intent = getActivity().getIntent();
-        if (intent != null && intent.hasExtra(MainActivityFragment.MOVIE_TITLE)) {
+       // intent = getActivity().getIntent();
+       // if (intent != null && intent.hasExtra(MainActivityFragment.MOVIE_TITLE)) {
             // setting title
-            String title = intent.getStringExtra(MainActivityFragment.MOVIE_TITLE);
+            String title = arguments.getString(MainActivityFragment.MOVIE_TITLE);
             // setting Movie Synopsis
-            Log.i("Movie title name ", title);
-            String about = intent.getStringExtra(MainActivityFragment.MOVIE_ABOUT);
+//            Log.i("Movie title name ", title);
+            String about = arguments.getString(MainActivityFragment.MOVIE_ABOUT);//MainActivityFragment.MOVIE_ABOUT);
             //Setting release date
-            String release_date = intent.getStringExtra(MainActivityFragment.MOVIE_RELEASE_DATE);
+            String release_date = arguments.getString(MainActivityFragment.MOVIE_RELEASE_DATE);
             //Setting Rating
-            String userratingstring = intent.getStringExtra(MainActivityFragment.MOVIE_RATING);
+            String userratingstring = arguments.getString(MainActivityFragment.MOVIE_RATING);
             //Setting Poster
-            String poster_url = intent.getStringExtra(MainActivityFragment.MOVIE_POSTER);
+            String poster_url = arguments.getString(MainActivityFragment.MOVIE_POSTER);
 
             //Parsing the rating in float
             float ratingfloat = Float.parseFloat(userratingstring);
 
-            String movie_idString = intent.getStringExtra((MainActivityFragment.MOVIE_ID));
+            String movie_idString = arguments.getString((MainActivityFragment.MOVIE_ID));
             movieId = Integer.parseInt(movie_idString);
 
             user_rating_bar = ((RatingBar) rootview.findViewById(R.id.ratingBar));
@@ -206,7 +204,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
             trailerAdapter = new TrailerCursorAdapter(getActivity(), null, 0);
             reviewAdapter = new ReviewCursorAdapter(getActivity(), null, 0);
-            detailAdapter = new DetailsCursorAdapter(getActivity(), null, 0);
+            //detailAdapter = new DetailsCursorAdapter(getActivity(), null, 0);
 
 
 
@@ -290,6 +288,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
                 }
             }
         }
+        //insertDetails();
             return rootview;
         }
 
@@ -346,6 +345,7 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
 
         c.close();
         rc.close();
+
 
 
 
@@ -509,11 +509,11 @@ public class DetailActivityFragment extends Fragment implements LoaderManager.Lo
     public void onLoaderReset(Loader<Cursor> loader) {
 
         if (loader.getId() == 1){
-         //   trailerAdapter.swapCursor(null);
+       //     trailerAdapter.swapCursor(null);
     }
 
     else if(loader.getId()==2){
-            //reviewAdapter.swapCursor(null);
+//            reviewAdapter.swapCursor(null);
         }
     }
 

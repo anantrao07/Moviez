@@ -4,13 +4,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import app.com.moviez.anant.moviez.data.MovieProvider;
 import app.com.moviez.anant.moviez.data.MoviesColumns;
 
 public class MainActivity extends AppCompatActivity implements MainActivityFragment.Callback {
@@ -92,20 +90,18 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
    // @Override
     //public void onItemSelected(Cursor c) {
    @Override
-   public void onItemSelected(Uri data , int pos) {
-        if (mTwoPane) {
+   public void onItemSelected(Uri data , Cursor c ) {
+
 
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle bundle = new Bundle();
 
-            Cursor c = getContentResolver().query(MovieProvider.Movies.CONTENT_URI,
-                    new String[]{MoviesColumns.COLUMN_MOVIE_ID},
-                    null,
-                    null,//new String[]{Integer.toString(movieId)}, //   new String[]{Integer.toString(movieId)},
-                    null);
-            c.moveToPosition(pos);
+            bundle.putParcelable(DetailActivityFragment.DETAIL_URI , data);
+
+
+            Log.e("Values is ", c.toString());
 
 
 
@@ -120,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             ;
             int idx_poster = c.getColumnIndex(MoviesColumns.COLUMN_BACKDROP_PATH);
             ;
-            bundle.putParcelable(DetailActivityFragment.DETAIL_URI, (Parcelable) c);
+            //bundle.putParcelable(DetailActivityFragment.DETAIL_URI, (Parcelable) c);
 
             int movieIdInt = c.getInt(idx_movie_id);
 
@@ -133,15 +129,15 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             String url = sb.toString();
             String user_ratingstring = Float.toString(c.getFloat(idx_rating));
             String movie_dString = Integer.toString(movieIdInt);
-            bundle.putString("MOVIE_TITLE", c.getString(idx_title));
-            bundle.putString("MOVIE_ABOUT", c.getString(idx_about));
-            bundle.putString("MOVIE_RELEASE_DATE", c.getString(idx_release_date));
-            bundle.putString("MOVIE_RATING", user_ratingstring);
-            bundle.putString("MOVIE_POSTER", url);
-            bundle.putString("MOVIE_ID", movie_dString);
+            bundle.putString(MainActivityFragment.MOVIE_TITLE, c.getString(idx_title));
+            bundle.putString(MainActivityFragment.MOVIE_ABOUT, c.getString(idx_about));
+            bundle.putString(MainActivityFragment.MOVIE_RELEASE_DATE, c.getString(idx_release_date));
+            bundle.putString(MainActivityFragment.MOVIE_RATING, user_ratingstring);
+            bundle.putString(MainActivityFragment.MOVIE_POSTER, url);
+            bundle.putString(MainActivityFragment.MOVIE_ID, movie_dString);
 
             Log.e("Values is ", c.toString());
-
+       if (mTwoPane) {
             DetailActivityFragment fragment = new DetailActivityFragment();
             fragment.setArguments(bundle);
 
@@ -150,17 +146,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
 
         } else {
 
-               Intent intent = new Intent(this, DetailActivity.class);
+
+               Intent intent = new Intent(this, DetailActivity.class).putExtras(bundle);
 
                startActivity(intent);
         }
     }
 }
 
-
-
-
-
-//}
 
 
