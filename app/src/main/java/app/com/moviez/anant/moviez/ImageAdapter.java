@@ -40,6 +40,9 @@ public class ImageAdapter extends ArrayAdapter<MoviesDetail> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+
+
+
         MoviesDetail moviedetail = getItem(position);
 
     //convertview is the view returned by arrayadapter which will be asked by the grid view,to inflate the ui

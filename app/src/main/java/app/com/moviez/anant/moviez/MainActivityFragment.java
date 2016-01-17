@@ -1,12 +1,18 @@
 package app.com.moviez.anant.moviez;
 
-import android.app.Fragment;
+
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,47 +21,67 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CursorAdapter;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
+import app.com.moviez.anant.moviez.data.MovieProvider;
+import app.com.moviez.anant.moviez.data.MoviesColumns;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
 
-
+    private static final int CURSOR_LOADER_ID = 0;
+   // private MovieCursorAdapter mCursorAdapter;
     static final String MOVIE_TITLE = "app.com.moviez.anant.moviez.MOVIE_TITLE";
     static final String MOVIE_POSTER = "app.com.moviez.anant.moviez.MOVIE_POSTER";
     static final String MOVIE_ABOUT = "app.com.moviez.anant.moviez.MOVIE_ABOUT";
     static final String MOVIE_RATING = "app.com.moviez.anant.moviez.MOVIE_RATING";
     static final String MOVIE_RELEASE_DATE = "app.com.moviez.anant.moviez.MOVIE_RELEASE_DATE";
+    static final String MOVIE_ID = "app.com.moviez.anant.moviez.MOVIE_ID";
     static final String Error_MSG = "Sorry, something went wrong with network connection. :(";
 
 
     public ArrayList<MoviesDetail> mvd ;
-
-    ArrayList<MoviesDetail> allMovies = new ArrayList<MoviesDetail>();
-    ArrayList<MoviesDetail> sortedList;
+    private MoviesAdapter mmovieAdapter;
+    //ArrayList<MoviesDetail> allMovies = new ArrayList<MoviesDetail>();
+    //ArrayList<MoviesDetail> sortedList;
+    public  static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
     GridView gridView;
 
-    public  ImageAdapter movieDetailAdapter;
+    public interface Callback{
 
+        public void onItemSelected(Uri data  , int pos);
+    }
+
+  /*  public static MainActivityFragment newInstance(int index ) {
+        MainActivityFragment f = new MainActivityFragment();
+
+        // Supply index input as an argument.
+        Bundle args = new Bundle();
+        args.putInt("movieindex", index);
+      //  args.putInt("movie id" , idx_movie_id);
+
+        Log.e("imhereValue of movieid", String.valueOf(index));
+
+        f.setArguments(args);
+
+        return f;
+    }
+
+   /* public int getShownIndex(){
+
+        int i = getArguments().getInt("movieindex");
+        Log.e("Value is ", "value is "+ i);
+        return  getArguments().getInt("movieindex" , 0);
+
+    }*/
     public MainActivityFragment() {
 
     }
@@ -76,33 +102,27 @@ public class MainActivityFragment extends Fragment {
      */
 
 
-    @Override
+        @Override
     public void onCreate(Bundle savedInstanceState) {
 
             super.onCreate(savedInstanceState);
 
-        if(savedInstanceState==null || !savedInstanceState.containsKey("moviedetails")){
-            mvd = new ArrayList<>(allMovies);
-        }
-        else{
-            mvd = savedInstanceState.getParcelableArrayList("moviedetails");
-        }
+            // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
     }
-
-    /**
-     * Initialize the contents of the Activity's standard options menu.  You
-     * should place your menu items in to <var>menu</var>.  For this method
-     * to be called, you must have first called {@link #setHasOptionsMenu}.  See
-     * { Activity#onCreateOptionsMenu(Menu) Activity.onCreateOptionsMenu}
-     * for more information.
-     *
-     * @param menu     The options menu in which you place your items.
-     * @param inflater
-     * @see #setHasOptionsMenu
-     * @see #onPrepareOptionsMenu
-     * @see #onOptionsItemSelected
-     */
+        /**
+         * Initialize the contents of the Activity's standard options menu.  You
+         * should place your menu items in to <var>menu</var>.  For this method
+         * to be called, you must have first called {@link #setHasOptionsMenu}.  See
+         * { Activity#onCreateOptionsMenu(Menu) Activity.onCreateOptionsMenu}
+         * for more information.
+         *
+         * @param menu     The options menu in which you place your items.
+         * @param inflater
+         * @see #setHasOptionsMenu
+         * @see #onPrepareOptionsMenu
+         * @see #onOptionsItemSelected
+         */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //inflating the Mainactivity fragment with its own menu items , via movie_fragment_menu.xml
@@ -128,7 +148,6 @@ public class MainActivityFragment extends Fragment {
      * @param outState Bundle in which to place your saved state.
      */
 
-
     /**
      * This hook is called whenever an item in your options menu is selected.
      * The default implementation simply returns false to have the normal
@@ -145,118 +164,291 @@ public class MainActivityFragment extends Fragment {
      * proceed, true to consume it here.
      * @see #onCreateOptionsMenu
      */
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        int id = item.getItemId();
-
-
+       int id = item.getItemId();
 
 
         if (id == R.id.action_sort) {
 
-            if (isNetworkAvailable() == true) {
-            NetworkCall nwc = new NetworkCall();
+            Cursor sortC = getActivity().getContentResolver().query(MovieProvider.Movies.CONTENT_URI,//URI
+                    null,//project
+                    null,//selection
+                    null, //selection argument
+                    MoviesColumns.COLUMN_VOTE_AVERAGE+" DESC");//sort order
 
-            String urlPopular = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=" + NetworkCall.PERSONAL_API_KEY;
-
-            movieDetailAdapter.clear();
-            nwc.execute(urlPopular);
-            movieDetailAdapter.addAll(allMovies);
-            movieDetailAdapter.notifyDataSetChanged();
+            //mmovieAdapter.getCursor().close();
+            mmovieAdapter.changeCursor(sortC);
+            mmovieAdapter.notifyDataSetChanged();
         }
 
-        else {
-
-                Toast.makeText(getActivity(), Error_MSG, Toast.LENGTH_SHORT).show();
-        }
-
-            return true;
-
-
-        }
 
         if (id == R.id.action_sortrated) {
 
+            Cursor ratedC = getActivity().getContentResolver().query(MovieProvider.Movies.CONTENT_URI,//URI
+                    null,//project
+                    null,//selection
+                    null, //selection argument
+                    MoviesColumns.COLUMN_POPULARITY+" DESC");//sort order
 
-            if(allMovies==null){
+
+            Log.i(LOG_TAG, "cursor count: " + ratedC.getCount());
+            if(ratedC==null){
                 Toast.makeText(getActivity(), Error_MSG, Toast.LENGTH_SHORT).show();
             }
             else {
-                sortedList = new ArrayList<MoviesDetail>(allMovies);
-                Collections.sort(sortedList);
-                movieDetailAdapter.clear();
-                movieDetailAdapter.addAll(sortedList);
+              //  sortedList = new ArrayList<MoviesDetail>(allMovies);
+              //  Collections.sort(sortedList);
+                //allMovies.
+               // movieDetailAdapter.clear();  onLoadFinished( loader, c);
+               // mmovieAdapter.getCursor().close();
+                mmovieAdapter.changeCursor(ratedC);
+                mmovieAdapter.notifyDataSetChanged();
+               // mmovieAdapter.swapCursor(c);
+
 
             }
-            return true;
+           // c.close();
+           // return true;
 
         }
-        return super.onOptionsItemSelected(item);
-    }
+        if (id == R.id.action_favorites){
+
+            Cursor fav_list = getActivity().getContentResolver().query(MovieProvider.Movies.CONTENT_URI,
+                   null,MoviesColumns.COLUMN_FAVORITE + " = ? ",
+                    new String[]{"Y"},//new String[]{Integer.toString(movieId)}, //   new String[]{Integer.toString(movieId)},
+                    null);
+
+            int count = fav_list.getCount();
+            if(fav_list == null || fav_list.getCount()==0){
+                Toast.makeText(getActivity(),"Sorry no favourites made yet",Toast.LENGTH_SHORT).show();
+            }else {
+
+                //mmovieAdapter.getCursor().close();
+                mmovieAdapter.changeCursor(fav_list);
+
+
+                mmovieAdapter.notifyDataSetChanged();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    fav_list.getNotificationUri();
+
+                if(fav_list.getCount()!=count) {
+
+                    mmovieAdapter.notifyDataSetChanged();
+                }
+                }
+
+            }
+
+        }
+            return super.onOptionsItemSelected(item);
+        }
+
 
     @Override
     public void onSaveInstanceState (Bundle outState) {
 
-       super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("Moviedetails", mvd);
+        super.onSaveInstanceState(outState);
+        //outState.putParcelableArrayList("Moviedetails", mvd);
 
     }
 
+    /**
+     * Called when the fragment is visible to the user and actively running.
+     * This is generally
+     * tied to {@link //Activity#onResume() Activity.onResume} of the containing
+     * Activity's lifecycle.
+     */
+    @Override
+    public void onResume() {
+
+
+        super.onResume();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+      /*  Cursor cur = getActivity().getContentResolver().query(MovieProvider.Movies.CONTENT_URI,
+                null, null, null, null);
+        Log.v("cursor value ","cursor value " + cur.getCount());
+*/
+
+        // The CursorAdapter will take data from our cursor and populate the ListView
+        // However, we cannot use FLAG_AUTO_REQUERY since it is deprecated, so we will end
+        // up with an empty list the first time we run.
+        mmovieAdapter = new MoviesAdapter(getActivity(), null , 0);
+
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        NetworkCall nw = new NetworkCall();
-        if (isNetworkAvailable() == false||NetworkCall.PERSONAL_API_KEY.length()==0) {
-            Toast.makeText(getActivity(), Error_MSG, Toast.LENGTH_SHORT).show();
-
-        } else {
-
-            nw.execute("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=" + NetworkCall.PERSONAL_API_KEY);
-        }
-        movieDetailAdapter = new ImageAdapter(getActivity(), allMovies);
-
-        gridView = (GridView) rootView.findViewById(R.id.movies_gridview);
-        gridView.setAdapter(movieDetailAdapter);
-        movieDetailAdapter.notifyDataSetChanged();
 
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MoviesDetail msg = movieDetailAdapter.getItem(position);
+       /* GetJsonTask gt = new GetJsonTask(getActivity());
+        Cursor c = getActivity().getContentResolver().query(MovieProvider.Movies.CONTENT_URI,
+                null, null, null, null);
+        Log.i(LOG_TAG, "cursor count: " + c.getCount());*/
 
-                String poster = msg.getJsf_poster();
-                StringBuffer sb = new StringBuffer();
-                sb.append(ImageAdapter.IMAGE_BASE_URL);
-                sb.append(ImageAdapter.POSTER_SIZE);
-                sb.append(poster);
-                String url = sb.toString();
-                Intent detailActivity = new Intent(getActivity(), DetailActivity.class);
-                float usr = (msg.getJsf_user_rating());
-                String user_ratingstring = Float.toString(usr);
+       // getShownIndex();
+            gridView = (GridView) rootView.findViewById(R.id.movies_gridview);
+
+            gridView.setAdapter(mmovieAdapter);
+
+       /* Cursor c = getActivity().getContentResolver().query(MovieProvider.Movies.CONTENT_URI,
+                new String[]{MoviesColumns.COLUMN_MOVIE_ID},
+                null,
+                null,//new String[]{Integer.toString(movieId)}, //   new String[]{Integer.toString(movieId)},
+                null);
+*/
+
+      //  c.close();
+
+       // Toast.makeText(this, "value of movie id is "+ f.ge , )
+       gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+           @Override
+           public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+               //  MoviesDetail msg = movieDetailAdapter.getItem(position);
+
+               getActivity().getContentResolver().query(MovieProvider.Movies.CONTENT_URI,
+                       new String[]{MoviesColumns.COLUMN_MOVIE_ID},
+                       null,
+                       null,//new String[]{Integer.toString(movieId)}, //   new String[]{Integer.toString(movieId)},
+                       null);
+              Cursor c = (Cursor) adapterView.getItemAtPosition(position);
+
+               ((Callback) getActivity()).onItemSelected(MovieProvider.Movies.CONTENT_URI , adapterView.getSelectedItemPosition());
 
 
-                detailActivity.putExtra(MOVIE_TITLE, msg.getJsf_original_title());
-                detailActivity.putExtra(MOVIE_ABOUT, msg.getJsf_plot_synopsis());
-                detailActivity.putExtra(MOVIE_RELEASE_DATE, msg.getJsf_release_date());
+               //( (Callback)getActivity()).onItemSelected((Cursor)adapterView.getItemAtPosition(position));
+
+
+
+           /*    if (c != null) {
+
+                   int movie_id;
+                   //  int idx_movie_id = c.getColumnIndex(MoviesColumns.COLUMN_MOVIE_ID);
+                   ((Callback) getActivity()).onItemSelected(MovieProvider.Movies.CONTENT_URI);
+
+               }*/
+
+
+             /*  Cursor c = getActivity().getContentResolver().query(MovieProvider.Movies.CONTENT_URI,
+                     null,
+                   null,//MoviesColumns.COLUMN_MOVIE_ID + " = ? ",
+                 null,//new String[]{Integer.toString()},//new String[]{Integer.toString(movieId)}, //   new String[]{Integer.toString(movieId)},
+               null);*/
+             //  mmovieAdapter.getItem(position);
+             //  Cursor c = mmovieAdapter.getCursor();
+
+              //    c.moveToPosition(position);
+
+               int idx_movie_id = c.getColumnIndex(MoviesColumns.COLUMN_MOVIE_ID);
+               int idx_title = c.getColumnIndex(MoviesColumns.COLUMN_ORIGINAL_TITLE);
+               ;
+               int idx_about = c.getColumnIndex(MoviesColumns.COLUMN_OVERVIEW);
+               ;
+               int idx_release_date = c.getColumnIndex(MoviesColumns.COLUMN_RELEASE_DATE);
+               ;
+               int idx_rating = c.getColumnIndex(MoviesColumns.COLUMN_VOTE_AVERAGE);
+               ;
+               int idx_poster = c.getColumnIndex(MoviesColumns.COLUMN_BACKDROP_PATH);
+               ;
+
+
+               String poster = c.getString(idx_poster);
+               Log.i(LOG_TAG, "value of movie id fetched " + poster);
+               StringBuffer sb = new StringBuffer();
+               sb.append(ImageAdapter.IMAGE_BASE_URL);
+               sb.append(ImageAdapter.POSTER_SIZE);
+               sb.append(poster);
+               String url = sb.toString();
+               Intent detailActivity = new Intent(getActivity(), DetailActivity.class);
+               // ((Callback) getActivity()).onItemSelected(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+               //        locationSetting, cursor.getLong(COL_WEATHER_DATE)
+               //));
+
+               int movieIdInt = c.getInt(idx_movie_id);
+               Log.i(LOG_TAG, "value of movie id fetched " + movieIdInt);
+               String movie_dString = Integer.toString(movieIdInt);
+               Log.i(LOG_TAG, "value of movie id fetched " + movie_dString);
+
+               String user_ratingstring = Float.toString(c.getFloat(idx_rating));
+
+               Bundle bundle = new Bundle();
+               bundle.putString(MOVIE_TITLE, c.getString(idx_title));
+               bundle.putString(MOVIE_ABOUT, c.getString(idx_about));
+               bundle.putString(MOVIE_RELEASE_DATE, c.getString(idx_release_date));
+               bundle.putString(MOVIE_RATING, user_ratingstring);
+               bundle.putString(MOVIE_POSTER, url);
+               bundle.putString(MOVIE_ID, movie_dString);
+
+               detailActivity.putExtras(bundle);
+                detailActivity.putExtra(MOVIE_ABOUT, c.getString(idx_about));
+                detailActivity.putExtra(MOVIE_RELEASE_DATE, c.getString(idx_release_date));
                 detailActivity.putExtra(MOVIE_RATING, user_ratingstring);
                 detailActivity.putExtra(MOVIE_POSTER, url);
-                startActivity(detailActivity);
+                detailActivity.putExtra(MOVIE_ID, movie_dString);
+               startActivity(detailActivity);
+
+               //c.close();
+           }
 
 
-            }
+       });
+            return rootView;
 
-        });
-        return rootView;
+        }
+
+
+    /**
+     * Called when the fragment's activity has been created and this
+     * fragment's view hierarchy instantiated.  It can be used to do final
+     * initialization once these pieces are in place, such as retrieving
+     * views or restoring state.  It is also useful for fragments that use
+     * {@link #setRetainInstance(boolean)} to retain their instance,
+     * as this callback tells the fragment when it is fully associated with
+     * the new activity instance.  This is called after {@link #onCreateView}
+     * and before {@link #onViewStateRestored(Bundle)}.
+     *
+     * @param savedInstanceState If the fragment is being re-created from
+     *                           a previous saved state, this is the state.
+     */
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+
+        Cursor c = getActivity().getContentResolver().query(MovieProvider.Movies.CONTENT_URI,
+                null, null, null, null);
+        Log.i(LOG_TAG, "cursor count: " + c.getCount());
+        if (c == null || c.getCount() == 0){
+            updateMovie();
+        }
+        else if (isNetworkAvailable() == false || getString(R.string.api_key).length() == 0) {
+            Toast.makeText(getActivity(), Error_MSG, Toast.LENGTH_SHORT).show();
+
+        }
+
+        getLoaderManager().initLoader(CURSOR_LOADER_ID,null,this);
+
+        super.onActivityCreated(savedInstanceState);
+        c.close();
+    }
+
+    private void updateMovie() {
+        GetJsonTask weatherTask = new GetJsonTask(getActivity());
+
+
+                weatherTask.execute("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=" + getString(R.string.api_key));
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        //updateMovie();
+    }
     //****network check method*******
 
     private boolean isNetworkAvailable() {
@@ -267,175 +459,89 @@ public class MainActivityFragment extends Fragment {
         return networkInfo != null && networkInfo.isConnected();
     }
 
-    //****background async task class method*******
-
-    public  class NetworkCall extends AsyncTask<String , Void, List> {
-
-
-        public final String LOG_TAG = NetworkCall.class.getSimpleName();
-
-        //Write your API in the below String variable PERSONAL_API_KEY
-
-        public final static String PERSONAL_API_KEY = "";
-
-
-        protected final String jsf_original_title = "original_title";
-        protected final String jsf_poster = "poster_path";
-        protected final String jsf_plot_synopsis = "overview";
-        protected final String jsf_user_rating = "vote_average";
-        protected final String jsf_release_date = "release_date";
-        protected final String jsf_results = "results";
-        protected final String jsf_id = "id";
+    /**
+     * Instantiate and return a new Loader for the given ID.
+     *
+     * @param id   The ID whose loader is to be created.
+     * @param args Any arguments supplied by the caller.
+     * @return Return a new Loader instance that is ready to start loading.
+     */
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
 
-        JSONObject jsonObj;
-        JSONArray jsonArray;
+        return new CursorLoader(getActivity(), MovieProvider.Movies.CONTENT_URI,
+                null,
+                null,
+                null,
+                null);
 
-        // Will contain the raw JSON response as a string.
-
-        HttpURLConnection urlConnection;
-        BufferedReader reader;
-
-
-        String aboutmoiejsonstr = null;
-
-
-        @Override
-        protected ArrayList<MoviesDetail> doInBackground(String... params) {
-            // Will contain the raw JSON response as a arraylist.
-
-            try {
-
-                URL url = new URL(params[0]);
-
-                urlConnection = (HttpURLConnection) url.openConnection();
-
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-                int response = urlConnection.getResponseCode();
-                // Log.d("LOG_TAG", "The response is: " + response);
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-
-                if (inputStream == null) {
-                    aboutmoiejsonstr = null;
-
-                }
-
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // for making debug easy :)
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    aboutmoiejsonstr = null;
-
-                } else {
-        //       Log.i("StringParsed", aboutmoiejsonstr);
-
-                    aboutmoiejsonstr = buffer.toString();
-
-                    Log.i(LOG_TAG, aboutmoiejsonstr);
-
-                }
-            } catch (IOException e) {
-                Log.e("LOG_TAG", "Error ", e);
-
-                // If the code didn't successfully get the movie data, there's no point in attempting
-                // to parse it.
-                aboutmoiejsonstr = null;
-            } finally {
-
-//            Log.i(LOG_TAG , aboutmoiejsonstr);
-                if (urlConnection != null) {
-
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-
-                    try {
-
-                        reader.close();
-
-                    } catch (final IOException e) {
-
-                        Log.e("PlaceholderFragment", "Error closing stream", e);
-                    }
-                }
-            }
-
-            try {
-
-
-                    return getMovieDetails(aboutmoiejsonstr);
-
-
-            } catch (JSONException e) {
-
-                e.printStackTrace();
-
-                Log.e(LOG_TAG, "JSON failed,pls correct me ");
-            }
-            return null;
-        }
-
-        public ArrayList<MoviesDetail> getMovieDetails(String jsonfeed) throws JSONException {
-
-            // Log.e("MOVIEJASONSTR", "its empty");
-
-            jsonObj = new JSONObject(jsonfeed);
-            //parse the entire json string
-            jsonArray = jsonObj.getJSONArray(jsf_results);
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                int id;
-                String int_title;
-                String int_poster_path;
-                String int_overview;
-                String int_release_date;
-                float int_user_rating;
-
-                JSONObject int_jsonObj = jsonArray.getJSONObject(i);
-//parse json objects into its values
-                id = int_jsonObj.getInt(jsf_id);
-                int_title = int_jsonObj.getString(jsf_original_title);
-
-                int_poster_path = int_jsonObj.getString(jsf_poster);
-                int_overview = int_jsonObj.getString(jsf_plot_synopsis);
-                int_release_date = int_jsonObj.getString(jsf_release_date);
-                int_user_rating = (float) int_jsonObj.getDouble(jsf_user_rating);
-
-                //create a mMovieDetail object that we will populate the json data
-                MoviesDetail mvd = new MoviesDetail();
-                mvd.setJsf_id(id);
-                mvd.setJsf_original_title(int_title);
-                mvd.setJsf_poster(int_poster_path);
-                mvd.setJsf_plot_synopsis(int_overview);
-                mvd.setJsf_release_date(int_release_date);
-                mvd.setJsf_user_rating(int_user_rating);
-
-                //add newly create movie detail to our collection
-                allMovies.add(mvd);
-                //Log.i("Parsedmsg", aboutmoiejsonstr);
-
-                //Log.i("allMovies", allMovies.get(i).toString());
-
-            }
-
-            return allMovies;
-        }
-
-        @Override
-        protected void onPostExecute(List movies) {
-
-            movieDetailAdapter.notifyDataSetChanged();
-
-        }
     }
+
+    /**
+     * Called when a previously created loader has finished its load.  Note
+     * that normally an application is <em>not</em> allowed to commit fragment
+     * transactions while in this call, since it can happen after an
+     * activity's state is saved.  See {@link //FragmentManager#beginTransaction()
+     * FragmentManager.openTransaction()} for further discussion on this.
+     * <p/>
+     * <p>This function is guaranteed to be called prior to the release of
+     * the last data that was supplied for this Loader.  At this point
+     * you should remove all use of the old data (since it will be released
+     * soon), but should not do your own release of the data since its Loader
+     * owns it and will take care of that.  The Loader will take care of
+     * management of its data so you don't have to.  In particular:
+     * <p/>
+     * <ul>
+     * <li> <p>The Loader will monitor for changes to the data, and report
+     * them to you through new calls here.  You should not monitor the
+     * data yourself.  For example, if the data is a {@link Cursor}
+     * and you place it in a {@link CursorAdapter}, use
+     * the {@link CursorAdapter#CursorAdapter(Context,
+     * Cursor, int)} constructor <em>without</em> passing
+     * in either {@link CursorAdapter#FLAG_AUTO_REQUERY}
+     * or {@link CursorAdapter#FLAG_REGISTER_CONTENT_OBSERVER}
+     * (that is, use 0 for the flags argument).  This prevents the CursorAdapter
+     * from doing its own observing of the Cursor, which is not needed since
+     * when a change happens you will get a new Cursor throw another call
+     * here.
+     * <li> The Loader will release the data once it knows the application
+     * is no longer using it.  For example, if the data is
+     * a {@link Cursor} from a {@link android.content.CursorLoader},
+     * you should not call close() on it yourself.  If the Cursor is being placed in a
+     * {@link CursorAdapter}, you should use the
+     * {@link CursorAdapter#swapCursor(Cursor)}
+     * method so that the old Cursor is not closed.
+     * </ul>
+     *
+     * @param loader The Loader that has finished.
+     * @param data   The data generated by the Loader.
+     */
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        mmovieAdapter.swapCursor(data);
+    }
+
+    /**
+     * Called when a previously created loader is being reset, and thus
+     * making its data unavailable.  The application should at this point
+     * remove any references it has to the Loader's data.
+     *
+     * @param loader The Loader that is being reset.
+     */
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+        mmovieAdapter.swapCursor(null);
+    }
+
+    /**
+     * Instantiate and return a new Loader for the given ID.
+     *
+     * @param id   The ID whose loader is to be created.
+     * @param args Any arguments supplied by the caller.
+     * @return Return a new Loader instance that is ready to start loading.
+     */
 
 }

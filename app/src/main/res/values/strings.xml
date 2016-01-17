@@ -5,5 +5,11 @@
     <string name="title_activity_image_detail">ImageDetail</string>
     <string name="action_sort"> SortBy:Most Popular</string>
     <string name="action_rated_sort">SortBy: Most Rated</string>
+    <string name="action_rated_favs">SortBy: Favourites</string>
     <string name="title_activity_detail">Details</string>
+    <string name="title_activity_design">design</string>
+    <string name="api_key">1de6092eb35cd69dc8285c866c1875cb</string>
+    <string name="action_share">Share</string>
+    <string name="title_activity_favorites">Favorites</string>
+    <string name="title_activity_favorite">Favorite</string>
 </resources>

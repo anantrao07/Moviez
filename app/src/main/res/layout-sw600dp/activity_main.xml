@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:divider="?android:attr/dividerHorizontal"
+
+    >
+
+
+
+    <fragment
+        android:id="@+id/movieslist_fragment"
+        android:name = "app.com.moviez.anant.moviez.MainActivityFragment"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        >
+
+    </fragment>
+    <FrameLayout
+        android:id="@+id/movie_detail_panel"
+
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="4">
+
+    </FrameLayout>
+</LinearLayout>

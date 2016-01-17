@@ -11,7 +11,7 @@
         android:numColumns="auto_fit"
         android:verticalSpacing="4dp"
         android:horizontalSpacing="2dp"
-        android:stretchMode="spacingWidth"
+        android:stretchMode="columnWidth"
         android:gravity="center"
         tools:context=".MainActivityFragment"
         android:background="@color/white"

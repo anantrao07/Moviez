@@ -17,6 +17,11 @@ public class MoviesDetail implements Parcelable ,Comparable<MoviesDetail> {
     private String jsf_release_date;
     private String jsf_results;
     private int jsf_id;
+    private float jsf_popularity;
+
+
+
+
 
     public MoviesDetail() {
 
@@ -81,7 +86,13 @@ public class MoviesDetail implements Parcelable ,Comparable<MoviesDetail> {
     public void setJsf_release_date(String jsf_release_date) {
         this.jsf_release_date = jsf_release_date;
     }
+    public float getJsf_popularity() {
+        return jsf_popularity;
+    }
 
+    public void setJsf_popularity(float jsf_popularity) {
+        this.jsf_popularity = jsf_popularity;
+    }
     public void setJsf_results(String jsf_results) {
         this.jsf_results = jsf_results;
     }
@@ -105,6 +116,7 @@ public class MoviesDetail implements Parcelable ,Comparable<MoviesDetail> {
         dest.writeString(jsf_release_date);
         dest.writeString(jsf_results);
         dest.writeInt(jsf_id);
+        dest.writeFloat(jsf_popularity);
 
     }
 

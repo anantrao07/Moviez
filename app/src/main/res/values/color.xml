@@ -5,4 +5,5 @@
     <item name="primarylighttext" type="color">#F0F4C3</item>
     <item name="white" type="color">#ffffff</item>
     <item name="primarydarkstars" type="color">#558B2F</item>
+    <item name="colorPrimary" type = 'color'>#C0CA33</item>
 </resources>

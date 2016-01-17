@@ -3,6 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
 
     xmlns:app="http://schemas.android.com/apk/res-auto"
+
+
     >
     <item
         android:id = "@+id/action_sortrated"
@@ -15,5 +17,10 @@
     <item android:id="@+id/action_sort"
         android:title="@string/action_sort"
         android:orderInCategory="100"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/action_favorites"
+        android:title="@string/action_rated_favs"
+        android:orderInCategory="102"
         app:showAsAction="never" />
 </menu>
