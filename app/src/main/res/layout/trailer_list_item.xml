@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:textColor="@color/primarydarkstars"
+    android:orientation="horizontal"
+    >
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageplayButton"
+
+
+        android:padding="8dp"
+        android:layout_margin="4dp"
+        android:src= "@drawable/right246"
+        android:layout_gravity="left"/>
+
+
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Medium Text"
+        android:id="@+id/trailer_name"
+        android:gravity="right"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:textColor="@color/primarydarkstars"
+        />
+
+
+</LinearLayout>

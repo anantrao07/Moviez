@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayoutOverview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--! <include
+         android:id="@+id/toolbar"
+         layout="@layout/toolbar" !-->/>
+
+    <LinearLayout
+        android:id="@+id/ProgressSpinner"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <ProgressBar
+            android:id="@+id/TransactionsProgressSpinner"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:fillViewport="false">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/LinearLayoutContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/RelativeLayoutArcView1"
+                    android:layout_width="130dp"
+                    android:layout_height="155dp"
+                    android:layout_marginLeft="10dp">
+
+                    <com.hookedonplay.decoviewlib.DecoView
+                        android:id="@+id/dynamicArcView1"
+                        android:layout_width="130dp"
+                        android:layout_height="130dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true" />
+
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:text="100%"
+                        android:textSize="25dp" />
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="95dp"
+                        android:text="Category 1" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/RelativeLayoutArcView2"
+                    android:layout_width="130dp"
+                    android:layout_height="155dp"
+                    android:layout_marginLeft="55dp">
+
+                    <com.hookedonplay.decoviewlib.DecoView
+                        android:id="@+id/dynamicArcView2"
+                        android:layout_width="130dp"
+                        android:layout_height="130dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true" />
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:text="100%"
+                        android:textSize="25dp" />
+
+                    <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="95dp"
+                        android:text="Category 2" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:layout_marginTop="80dp"
+                android:orientation="horizontal"
+                >
+
+                <RelativeLayout
+                    android:id="@+id/RelativeLayoutArcView3"
+                    android:layout_width="130dp"
+                    android:layout_height="155dp"
+                    android:layout_marginLeft="10dp">
+
+                    <com.hookedonplay.decoviewlib.DecoView
+                        android:id="@+id/dynamicArcView3"
+                        android:layout_width="130dp"
+                        android:layout_height="130dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true" />
+
+                    <TextView
+                        android:id="@+id/textView9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:text="100%"
+                        android:textSize="25dp" />
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="95dp"
+                        android:text="Category 3" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/RelativeLayoutArcView4"
+                    android:layout_width="130dp"
+                    android:layout_height="155dp"
+                    >
+
+                    <com.hookedonplay.decoviewlib.DecoView
+                        android:id="@+id/dynamicArcView4"
+                        android:layout_width="130dp"
+                        android:layout_height="130dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
+
+                    <TextView
+                        android:id="@+id/textView8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:text="100%"
+                        android:textSize="25dp" />
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="95dp"
+                        android:text="Category 4" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>
