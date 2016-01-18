@@ -3,12 +3,11 @@
  Read ME 
 
 ****************************************************************************************
-API Key : please write the API key  in inner class NetworkCall in Class MainActivityFragment.
-public final static String PERSONAL_API_KEY =“APIKEY"
+API Key : please write the API key  in the Strings.xml file under values folder
 The app is using MOVIEDBAPI which is providing  all the data displayed in the App
 ****************************************************************************************
 The app has the below flow : 
-MainActivityFrament> inner Class NetworkCall > DetailActivityFragment
+MainActivityFrament> Async task Class for fetching data  > DetailActivityFragment
 
 MainActivityFragment : 
 Responsible for the following :
@@ -20,4 +19,4 @@ populate the data on the view attached to the fragment via OnCreateView method
 
 DetailActivityFragment : 
 
-This class is responsible to pick the data from explicit intent coming from MainActivityFragment and populate the Fragment child to Parent Activity 
+This class is responsible to pick the data from SQLlite using cursor loader  and populate the Fragment child to Parent Activity 
