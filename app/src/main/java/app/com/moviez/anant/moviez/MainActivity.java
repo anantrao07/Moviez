@@ -137,9 +137,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
             bundle.putString(MainActivityFragment.MOVIE_ID, movie_dString);
 
             Log.e("Values is ", c.toString());
+      // DetailActivityFragment fragment = new DetailActivityFragment();
+      // fragment.setArguments(bundle);
+//
        if (mTwoPane) {
-            DetailActivityFragment fragment = new DetailActivityFragment();
-            fragment.setArguments(bundle);
+           DetailActivityFragment fragment = new DetailActivityFragment();
+           fragment.setArguments(bundle);
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.movie_detail_panel, fragment, DETAILFRAGMENT_TAG).commit();
@@ -147,9 +150,12 @@ public class MainActivity extends AppCompatActivity implements MainActivityFragm
         } else {
 
 
-               Intent intent = new Intent(this, DetailActivity.class).putExtras(bundle);
+               Intent intent = new Intent(this, DetailActivity.class);
 
-               startActivity(intent);
+           intent.putExtras(bundle);
+
+
+           startActivity(intent);
         }
     }
 }

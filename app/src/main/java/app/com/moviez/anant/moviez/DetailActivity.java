@@ -8,8 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import static app.com.moviez.anant.moviez.MainActivityFragment.*;
-
 public class DetailActivity extends AppCompatActivity {
 
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
@@ -27,22 +25,15 @@ public class DetailActivity extends AppCompatActivity {
 
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-             Bundle arguments = new Bundle();
-            arguments.putParcelable(DetailActivityFragment.DETAIL_URI, getIntent().getExtras());
-            arguments.putParcelable(MOVIE_TITLE , getIntent().getExtras());
-            arguments.putParcelable(MOVIE_ABOUT , getIntent().getExtras());
-            arguments.putParcelable(MOVIE_RELEASE_DATE , getIntent().getExtras());
-            arguments.putParcelable(MOVIE_RATING , getIntent().getExtras());
-            arguments.putParcelable(MOVIE_POSTER , getIntent().getExtras());
-            arguments.putParcelable(MOVIE_ID , getIntent().getExtras());
+             //Bundle arguments = new Bundle();
+           // arguments = getIntent().getExtras();
 
 
-            DetailActivityFragment fragment = new DetailActivityFragment();
-            fragment.setArguments(arguments);
+          //  DetailActivityFragment fragment = new DetailActivityFragment();
+            //fragment.setArguments(arguments);
 
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.movie_detail_panel, fragment, DETAILFRAGMENT_TAG)
-                    .commit();
+          //  getSupportFragmentManager().beginTransaction().add(R.id.movie_detail_panel, fragment, DETAILFRAGMENT_TAG)
+            //       .commit();
         }
 
 
